@@ -186,7 +186,7 @@ router.put("/profile/:userId", async (req, res) => {
     if (!userId) return res.status(400).json({ error: "userId required" });
 
     const update = {};
-    const allowed = ["name", "phone", "addresses", "defaultAddressId"];
+    const allowed = ["name", "phone", "addresses", "defaultAddressId", "photoURL"];
     for (const k of allowed) {
       if (req.body[k] !== undefined) update[k] = req.body[k];
     }

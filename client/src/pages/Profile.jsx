@@ -138,6 +138,10 @@ export default function Profile() {
           addresses: data.addresses || [],
           defaultAddressId: data.defaultAddressId,
         });
+        // Load saved photo URL from database
+        if (data.photoURL) {
+          setPhotoURL(data.photoURL);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -173,6 +177,53 @@ export default function Profile() {
       setError(err.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    setError(null);
+    setSaving(true);
+
+    try {
+      // 1. Upload to Cloudinary
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+
+      const uploadRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        { method: "POST", body: formData }
+      );
+
+      if (!uploadRes.ok) throw new Error("Upload to Cloudinary failed");
+      const uploadData = await uploadRes.json();
+      const cloudinaryURL = uploadData.secure_url;
+
+      // 2. Update user profile in database with photoURL
+      const headers = await getAuthHeaders();
+      const profileRes = await fetch(`${API}/api/user/profile/${user.uid}`, {
+        method: "PUT",
+        headers,
+        credentials: "include",
+        body: JSON.stringify({ photoURL: cloudinaryURL }),
+      });
+
+      if (!profileRes.ok) throw new Error("Failed to save photo URL");
+
+      // 3. Update local state
+      setPhotoURL(cloudinaryURL);
+      setToast("Profile photo updated successfully");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -244,7 +295,7 @@ export default function Profile() {
               >
                 ✎
               </button>
-              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" />
+              <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
             </div>
             <div className="flex-1">
               <p className="text-xs tracking-[0.2em] uppercase text-stone-400 mb-1">Account</p>

@@ -46,8 +46,14 @@ router.get('/low-stock', async (req, res) => {
  */
 // GET /api/products/:id - get product by productId
 router.get('/:id', async (req, res) => {
+  const productId = Number(req.params.id);
+
+  if (isNaN(productId)) {
+    return res.status(400).json({ error: 'Invalid product ID. It must be a number.' });
+  }
+
   try {
-    const product = await Product.findOne({ productId: Number(req.params.id) });
+    const product = await Product.findOne({ productId });
     if (!product) return res.status(404).json({ error: 'Product not found' });
     res.json(product);
   } catch (err) {
@@ -79,8 +85,14 @@ router.post('/', verifyFirebaseToken, verifyAdmin, validateRequest(createProduct
  * @access  Private (Admin)
  */
 router.put('/:id', verifyFirebaseToken, verifyAdmin, validateRequest(updateProductSchema), async (req, res) => {
+  const productId = Number(req.params.id);
+
+  if (isNaN(productId)) {
+    return res.status(400).json({ error: 'Invalid product ID. It must be a number.' });
+  }
+  
   try {
-    const updated = await Product.findOneAndUpdate({ productId: Number(req.params.id) }, req.body, { new: true });
+    const updated = await Product.findOneAndUpdate({ productId }, req.body, { new: true });
     if (!updated) return res.status(404).json({ error: 'Product not found' });
     res.json(updated);
   } catch (err) {
@@ -93,10 +105,15 @@ router.put('/:id', verifyFirebaseToken, verifyAdmin, validateRequest(updateProdu
  * @desc    Deletes a product by its productId
  * @access  Private (Admin)
  */
+
 router.delete('/:id', verifyFirebaseToken, verifyAdmin, async (req, res) => {
+  const productId = Number(req.params.id);
+
+  if (isNaN(productId)) {
+    return res.status(400).json({ error: 'Invalid product ID. It must be a number.' });
+  }
   try {
-    const deleted = await Product.findOneAndDelete({ productId: Number(req.params.id) });
-    if (!deleted) return res.status(404).json({ error: 'Product not found' });
+    const deleted = await Product.findOneAndDelete({ productId });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });

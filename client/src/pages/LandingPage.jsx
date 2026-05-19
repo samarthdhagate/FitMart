@@ -620,7 +620,7 @@ function NavbarWithGithub({ navOpaque, menuOpen, setMenuOpen }) {
   }, []);
 
   const isOpaque = navOpaque || scrollY > 60;
-  const textColor = isOpaque ? "text-stone-900" : "text-white";
+  const textColor = "text-stone-900";
   const mutedColor = isOpaque ? "text-stone-500" : "text-white/70";
   const borderColor = isOpaque ? "border-stone-200" : "border-white/20";
   const bgClass = isOpaque

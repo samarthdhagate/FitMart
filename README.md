@@ -517,9 +517,8 @@ RAZORPAY_KEY_SECRET=<your_razorpay_key_secret>
 MONGO_DB=<your_database_name>
 
 # Optional — Redis caching for products API
-REDIS_URL=                  # full connection string e.g. redis://localhost:6379
-REDIS_HOST=                 # or host-only e.g. localhost
-PRODUCTS_CACHE_TTL=60       # cache TTL in seconds (default: 60)
+UPSTASH_REDIS_REST_URL=     # full connection string e.g. redis://localhost:6379
+UPSTASH_REDIS_REST_TOKEN=   # redis rest token
 
 # CORS
 ALLOWED_ORIGIN=http://localhost:5173    # comma-separate multiple origins

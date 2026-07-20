@@ -8,7 +8,16 @@ if (!admin.apps.length) {
     ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
     : undefined;
 
-  if (projectId && clientEmail && privateKey) {
+  const isPlaceholder = (val) => !val || val.startsWith('your_') || val.includes('YOUR_PRIVATE_KEY');
+
+  if (
+    projectId &&
+    clientEmail &&
+    privateKey &&
+    !isPlaceholder(projectId) &&
+    !isPlaceholder(clientEmail) &&
+    !isPlaceholder(privateKey)
+  ) {
     admin.initializeApp({
       credential: admin.credential.cert({
         projectId,

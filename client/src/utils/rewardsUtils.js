@@ -1,3 +1,7 @@
+/**
+ * Tiers configuration for rewards system.
+ * @type {Array<{name: string, min: number}>}
+ */
 export const REWARD_TIERS = [
   { name: "Bronze", min: 0 },
   { name: "Silver", min: 500 },
@@ -5,6 +9,11 @@ export const REWARD_TIERS = [
   { name: "Platinum", min: 3000 },
 ];
 
+/**
+ * Determines the current reward tier and the next milestone tier based on user points.
+ * @param {number} [points=0] - The user's total rewards points.
+ * @returns {{currentTier: {name: string, min: number}, nextTier: {name: string, min: number}|null}} An object containing the current and next tiers.
+ */
 export const getRewardTier = (points = 0) => {
   let currentTier = REWARD_TIERS[0];
   let nextTier = null;
@@ -22,6 +31,11 @@ export const getRewardTier = (points = 0) => {
   };
 };
 
+/**
+ * Calculates the progress percentage and points remaining until the next reward tier.
+ * @param {number} [points=0] - The user's total rewards points.
+ * @returns {{progress: number, pointsToNextTier: number, label: string}} Progress statistics and a display label.
+ */
 export const getTierProgress = (points = 0) => {
   const { currentTier, nextTier } = getRewardTier(points);
 
@@ -45,6 +59,11 @@ export const getTierProgress = (points = 0) => {
   };
 };
 
+/**
+ * Formats a raw timestamp or date string into a relative human-readable format.
+ * @param {string|Date|number} dateValue - The date value to evaluate.
+ * @returns {string} Relative string such as "Today", "Yesterday", or "N days ago".
+ */
 export const formatRelativeDate = (dateValue) => {
   if (!dateValue) return "";
 
@@ -59,6 +78,11 @@ export const formatRelativeDate = (dateValue) => {
   return `${diffDays} days ago`;
 };
 
+/**
+ * Resolves a descriptive title/label for a rewards ledger transaction.
+ * @param {object} transaction - The transaction object from the ledger.
+ * @returns {string} The formatted transaction name.
+ */
 export const getTransactionLabel = (transaction) => {
   const type = transaction?.sourceType || transaction?.type || "reward";
 
@@ -69,6 +93,11 @@ export const getTransactionLabel = (transaction) => {
   return transaction?.description || "FitRewards points";
 };
 
+/**
+ * Resolves a representative emoji icon for a rewards ledger transaction type.
+ * @param {object} transaction - The transaction object from the ledger.
+ * @returns {string} An emoji string representing the transaction source.
+ */
 export const getTransactionIcon = (transaction) => {
   const type = transaction?.sourceType || transaction?.type || "reward";
 
